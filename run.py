@@ -19,7 +19,7 @@ parser.add_argument('--network', type=str, default='ER', help='network types: Er
 parser.add_argument('--N', type=int, default=400, help='number of nodes in model networks')
 parser.add_argument('--kave', type=float, default=6, help='average degree in model networks')
 parser.add_argument('--tmax', type=int, default=400, help='maximum number of iterations in the voter model')
-parser.add_argument('--ttrans', type=int, default=40, help='transition time (i.e., time when adversarial attacks start)')
+parser.add_argument('--ttrans', type=int, default=0, help='transition time (i.e., time when adversarial attacks start)')
 parser.add_argument('--eps', type=float, default=0.01, help='epsilon or perturbation strength')
 parser.add_argument('--nb_xinit', type=int, default=100, help='number of initial states per network')
 parser.add_argument('--rhoinit', type=float, default=0.8, help='initial ratio of nodes with the opinion +1')
