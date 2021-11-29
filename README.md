@@ -20,7 +20,7 @@ e.g., in Erdos-Renyi networks
 python run.py --network 'ER'
 ```
 
-Note that $N=t_{\max}=400$, $\langle k \rangle = 6$, and $\epsilon=0.01$ are in default configuration (see `run.py` for details).
+Note that $N=t_{\max}=400$, $\langle k \rangle = 6$, $\rho_{\mathrm{init}}=0.8$, and $\epsilon=0.01$ are in default configuration (see `run.py` for details).
 
 $\rho$ distibutions for no perturbation (at $\epsilon=0$), adversarial attacks, and random attacks are displayed.
 
