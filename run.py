@@ -39,13 +39,16 @@ transition_time = args.ttrans
 if args.network == 'BA':
     # Barabasi-Albert model
     g = nx.barabasi_albert_graph(nb_nodes, int(average_degree / 2), seed=123)
+    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network  == 'ER':
     # Erdos-Renyi model
     g = nx.gnm_random_graph(nb_nodes, nb_edges, directed=False, seed=123)
+    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network == 'WS':
     # Watts-Strogatz model
     pws = 0.05
     g = nx.watts_strogatz_graph(nb_nodes, int(average_degree), pws, seed=123)
+    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network in ['facebook_combined', 'soc-advogato', 'soc-anybeat', 'soc-hamsterster']:
     # real-world social network
     # load edge list
@@ -57,12 +60,11 @@ elif args.network in ['facebook_combined', 'soc-advogato', 'soc-anybeat', 'soc-h
     g = nx.from_pandas_edgelist(edgelist, source='source', target='target')
     gcc = sorted(nx.connected_components(g), key=len, reverse=True)
     g = g.subgraph(gcc[0])
+    adj = nx.adjacency_matrix(g, dtype='float64')
     nb_nodes = g.number_of_nodes() # update `nb_nodes`
 else:
     raise ValueError("invalid network")
 
-# get the adjacency matrix
-adj = nx.adjacency_matrix(g, dtype='float64')
 sp.csr_matrix.setdiag(adj, 1)
 # adj = adj.T # for directed networks
 
@@ -82,31 +84,31 @@ x_target = np.repeat(-1, nb_nodes) # target state
 epsilon = args.eps # attack strength
 
 # simulate the voter model dynamics
-result_clean = clean_voter_model(adj, x_init, t_max, seed=123)
-result_adversarial = adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_time, seed=123)
-result_random = random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, seed=123)
+rho_clean = clean_voter_model(adj, x_init, t_max, seed=123)
+rho_adversarial = adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_time, seed=123)
+rho_random = random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, seed=123)
 
 # Average rho values
-print("Average rho values")
-print("(clean):", np.mean(result_clean))
-print("(adversarial):", np.mean(result_adversarial))
-print("(random):", np.mean(result_random))
+print("Average rho values:")
+print("(clean) {:.3f}".format(np.mean(rho_clean)))
+print("(adversarial) {:.3f}".format(np.mean(rho_adversarial)))
+print("(random) {:.3f}".format(np.mean(rho_random)))
 
 # KS distance
 print("\nKS distance between rho distributions and its p-value")
-ks = stats.ks_2samp(result_clean, result_adversarial)
+ks = stats.ks_2samp(rho_clean, rho_adversarial)
 print("clean vs adversarial:", ks[0], "p =",ks[1])
-ks = stats.ks_2samp(result_clean, result_random)
+ks = stats.ks_2samp(rho_clean, rho_random)
 print("clean vs random:", ks[0], "p =",ks[1])
 
 # plot histgram
-weights = np.ones_like(result_random) / len(result_random)
+weights = np.ones_like(rho_random) / len(rho_random)
 
 plt.ylim(0,1)
-plt.hist(result_random, alpha = 0.5, weights=weights, label='random')
-plt.hist(result_adversarial, alpha = 0.5, weights=weights, label='adversarial')
-plt.hist(result_clean, alpha = 0.5, weights=weights, label='no perturbation')
+plt.hist(rho_random, alpha = 0.5, weights=weights, label='random')
+plt.hist(rho_adversarial, alpha = 0.5, weights=weights, label='adversarial')
+plt.hist(rho_clean, alpha = 0.5, weights=weights, label='no perturbation')
 plt.ylabel(r'$P(\rho)$')
 plt.xlabel(r'$\rho$')
 plt.legend(loc='upper center')
-plt.show()
+plt.savefig('rho_distribution.png')

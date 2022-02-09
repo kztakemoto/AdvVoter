@@ -10,19 +10,20 @@ def clean_voter_model(adj, x_init, t_max, seed=None):
     nb_nodes = adj.shape[0]
     weighted_degree = np.array(np.sum(adj, axis=1)).reshape(-1)
 
-    result = []
+    rho = []
     for n in range(nb_samples):
         # opnion initialization
         x = x_init[n].copy()
+
         # opnion dynamics
         for t in range(t_max):
             prob = (1.0 - x * adj.dot(x) / weighted_degree) / 2.0
             flip_bool = np.random.rand(nb_nodes) < prob
             x[flip_bool] = -x[flip_bool]
             
-        result.append(len(x[x == 1]) / nb_nodes)
+        rho.append(len(x[x == 1]) / nb_nodes)
     
-    return result
+    return rho
 
 def adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_time, seed=None):
     if seed is not None:
@@ -34,7 +35,7 @@ def adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_ti
     weighted_degree = np.array(np.sum(adj, axis=1)).reshape(-1)
     adj_nonzero_rows, adj_nonzero_cols = adj.nonzero()
 
-    result = []
+    rho = []
     for n in range(nb_samples):
         # opnion initialization
         x = x_init[n].copy()
@@ -57,9 +58,9 @@ def adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_ti
             flip_bool = np.random.rand(nb_nodes) < prob
             x[flip_bool] = -x[flip_bool]
             
-        result.append(len(x[x == 1]) / nb_nodes)
-
-    return result
+        rho.append(len(x[x == 1]) / nb_nodes)
+    
+    return rho
 
 def random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, seed=None):
     if seed is not None:
@@ -71,7 +72,7 @@ def random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, se
     weighted_degree = np.array(np.sum(adj, axis=1)).reshape(-1)
     adj_nonzero_rows, adj_nonzero_cols = adj.nonzero()
 
-    result = []
+    rho = []
     for n in range(nb_samples):
         # opnion initialization
         x = x_init[n].copy()
@@ -94,7 +95,7 @@ def random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, se
             flip_bool = np.random.rand(nb_nodes) < prob
             x[flip_bool] = -x[flip_bool]
         
-        result.append(len(x[x == 1]) / nb_nodes)
+        rho.append(len(x[x == 1]) / nb_nodes)
     
-    return result
+    return rho
 
