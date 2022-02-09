@@ -39,16 +39,13 @@ transition_time = args.ttrans
 if args.network == 'BA':
     # Barabasi-Albert model
     g = nx.barabasi_albert_graph(nb_nodes, int(average_degree / 2), seed=123)
-    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network  == 'ER':
     # Erdos-Renyi model
     g = nx.gnm_random_graph(nb_nodes, nb_edges, directed=False, seed=123)
-    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network == 'WS':
     # Watts-Strogatz model
     pws = 0.05
     g = nx.watts_strogatz_graph(nb_nodes, int(average_degree), pws, seed=123)
-    adj = nx.adjacency_matrix(g, dtype='float64')
 elif args.network in ['facebook_combined', 'soc-advogato', 'soc-anybeat', 'soc-hamsterster']:
     # real-world social network
     # load edge list
@@ -60,11 +57,12 @@ elif args.network in ['facebook_combined', 'soc-advogato', 'soc-anybeat', 'soc-h
     g = nx.from_pandas_edgelist(edgelist, source='source', target='target')
     gcc = sorted(nx.connected_components(g), key=len, reverse=True)
     g = g.subgraph(gcc[0])
-    adj = nx.adjacency_matrix(g, dtype='float64')
     nb_nodes = g.number_of_nodes() # update `nb_nodes`
 else:
     raise ValueError("invalid network")
 
+# get the adjacency matrix
+adj = nx.adjacency_matrix(g, dtype='float64')
 sp.csr_matrix.setdiag(adj, 1)
 # adj = adj.T # for directed networks
 
