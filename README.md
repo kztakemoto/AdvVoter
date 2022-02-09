@@ -9,7 +9,7 @@ Chiyomaru K and Takemoto K (2021) Adversarial attacks on voter model dynamics in
 
 ## Usage
 ### Requirements
-Python 3.9.7
+Python 3.9
 ```
 pip install -r requirements.txt
 ```
