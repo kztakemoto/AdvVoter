@@ -5,7 +5,6 @@ from scipy import stats
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
-import random
 
 from voter_model_simulators import (
     clean_voter_model,
