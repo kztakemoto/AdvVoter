@@ -3,7 +3,7 @@ This repository contains data and code used in our study on *[Adversarial attack
 
 ## Terms of use
 
-MIT licensed. Happy if you cite our preprint when using the codes:
+MIT licensed. Happy if you cite our paper when using the codes:
 
 Chiyomaru K and Takemoto K (2021) **Adversarial attacks on voter model dynamics in complex networks**. Phys. Rev. E 106, 014301. doi:10.1103/PhysRevE.106.014301.
 
