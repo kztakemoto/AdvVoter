@@ -57,20 +57,20 @@ Note that computation is time-consuming.
 
 e.g., Facebook
 ```
-python run.py --network 'facebook_combined'
+python run.py --network facebook_combined
 ```
 
 The following real-world networks are also available.
-* Advogato (`--network 'soc-advogato'`)
-* AnyBeat (`--network 'soc-anybeat'`)
-* HAMSTERster (`--network 'soc-hamsterster'`)
+* Advogato (`--network soc-advogato`)
+* AnyBeat (`--network soc-anybeat`)
+* HAMSTERster (`--network soc-hamsterster`)
 
 ### Vote model dynamics in degree-preserving random networks for real-world networks
 Note that computation is time-consuming.
 
 e.g., Facebook
 ```
-python run_randomlized.py --network 'facebook_combined'
+python run_randomlized.py --network facebook_combined
 ```
 
 Use `run.py` when considering ER networks as null model networks.
