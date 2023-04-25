@@ -1,11 +1,12 @@
 # AdvVoter
-This repository contains data and code used in our study on *[Adversarial attacks on voter model dynamics in complex networks](https://doi.org/10.1103/PhysRevE.106.014301)*.
+This repository contains data and code used in our studies: *[Adversarial attacks on voter model dynamics in complex networks](https://doi.org/10.1103/PhysRevE.106.014301)* and *Mitigation of adversarial attacks on voter model dynamics by network heterogeneity*.
 
 ## Terms of use
 
-MIT licensed. Happy if you cite our paper when using the codes:
+MIT licensed. Happy if you cite our papers when using the codes:
 
-Chiyomaru K and Takemoto K (2022) **Adversarial attacks on voter model dynamics in complex networks**. Phys. Rev. E 106, 014301. doi:10.1103/PhysRevE.106.014301.
+* Chiyomaru K and Takemoto K (2022) **Adversarial attacks on voter model dynamics in complex networks**. Phys. Rev. E 106, 014301. doi:10.1103/PhysRevE.106.014301.
+* Chiyomaru K and Takemoto K (2023) **Mitigation of adversarial attacks on voter model dynamics by network heterogeneity**. *submitted for publication*.
 
 ## Usage
 ### Requirements
@@ -17,25 +18,59 @@ pip install -r requirements.txt
 ### Vote model dynamics in model networks
 e.g., in Erdos-Renyi networks
 ```
-python run.py --network 'ER'
+python run.py --network ER
 ```
 
 Note that $N=t_{\max}=400$, $\langle k \rangle = 6$, $\rho_{\mathrm{init}}=0.8$, and $\epsilon=0.01$ are in default configuration (see `run.py` for details).
 
 $\rho$ distibutions for no perturbation (at $\epsilon=0$), adversarial attacks, and random attacks are displayed.
+Each $\rho$ distribution is obtained from 100 realizations in default configuration (see `run.py` for details).
 
 ![rho_distributions](rho_distribution.png)
 
-Note that each $\rho$ distribution is obtained from 100 realizations in default configuration (see `run.py` for details).
+The following network models can be also considered:
+* Watts-Strogatz model (`--network WS`)
+* Barabasi-Albert model (`--network BA`)
+* Goh-Kahng-Kim model (`--network GKK`)
+* Holme-Kim model (`--network HK`)
 
+For a negative `tmax` value, the voter model dynamics are terminated when a steady state (consensus) is reached.
 
-Watts-Strogatz model (`--network 'WS'`) and Barabasi-Albert model (`--network 'BA'`) are also available.
+e.g., in Erdos-Renyi networks
+```
+python run.py --network ER --tmax -1
+```
+
+### For maximally disassortative and assortative model networks
+e.g., for maximally disassortative ER networks
+```
+python run.py --network ER --correlation disassort
+```
+
+for maximally assortative GKK networks with the degree exponent of 3.0
+```
+python run.py --network GKK --gamma 3.0 --correlation assort
+```
 
 ### Vote model dynamics in real-world networks
-Note that it is time-consuming.
+Note that computation is time-consuming.
 
 e.g., Facebook
 ```
 python run.py --network 'facebook_combined'
 ```
-Advogato (`--network 'soc-advogato'`), AnyBeat (`--network 'soc-anybeat'`), and HAMSTERster (`--network 'soc-hamsterster'`) networks are also available.
+
+The following real-world networks are also available.
+* Advogato (`--network 'soc-advogato'`)
+* AnyBeat (`--network 'soc-anybeat'`)
+* HAMSTERster (`--network 'soc-hamsterster'`)
+
+### Vote model dynamics in degree-preserving random networks for real-world networks
+Note that computation is time-consuming.
+
+e.g., Facebook
+```
+python run_randomlized.py --network 'facebook_combined'
+```
+
+Use `run.py` when considering ER networks as null model networks.

@@ -4,19 +4,30 @@ import scipy.sparse as sp
 from scipy import stats
 import networkx as nx
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from voter_model_simulators import (
     clean_voter_model,
     adversarial_voter_model,
     random_attacked_voter_model,
+    clean_voter_model_consensus,
+    adversarial_voter_model_consensus,
+    random_attacked_voter_model_consensus,
+)
+
+from utils import (
+    GKK_model,
+    generate_correlated_net_Sneppen,
+    load_network_data,
 )
 
 #### Parameters #############
 parser = argparse.ArgumentParser(description='Run the voter model dynamics in complex networks')
-parser.add_argument('--network', type=str, default='ER', help='network types: Erdos-Renyi (ER), Watts-Strogatz (WS), Barabasi-Albert (BA) networks, and real-world networks')
+parser.add_argument('--network', type=str, default='ER', help='network types: Erdos-Renyi (ER), Watts-Strogatz (WS), Barabasi-Albert (BA) networks, Goh-Kahng-Kim (GKK) model, Holme-Kim (HK) model, and real-world networks')
 parser.add_argument('--N', type=int, default=400, help='number of nodes in model networks')
 parser.add_argument('--kave', type=float, default=6, help='average degree in model networks')
+parser.add_argument('--gamma', type=float, default=2.2, help='degree exponent for GKK model')
+parser.add_argument('--phk', type=float, default=0.1, help='Probability of adding a triangle after adding a random edge for HK model')
+parser.add_argument('--correlation', type=str, default='uncorr', help='degree correlation. assort, disassort')
 parser.add_argument('--tmax', type=int, default=400, help='maximum number of iterations in the voter model')
 parser.add_argument('--ttrans', type=int, default=0, help='transition time (i.e., time when adversarial attacks start)')
 parser.add_argument('--eps', type=float, default=0.01, help='epsilon or perturbation strength')
@@ -45,20 +56,22 @@ elif args.network == 'WS':
     # Watts-Strogatz model
     pws = 0.05
     g = nx.watts_strogatz_graph(nb_nodes, int(average_degree), pws, seed=123)
+elif args.network == 'GKK':
+    # Goh-Kahng-Kim model
+    g = GKK_model(nb_nodes, nb_edges, args.gamma)
+elif args.network == 'HK':
+    # Holme-Kim model
+    g = nx.powerlaw_cluster_graph(nb_nodes, int(average_degree / 2), args.phk, seed=123)
 elif args.network in ['facebook_combined', 'soc-advogato', 'soc-anybeat', 'soc-hamsterster']:
     # real-world social network
-    # load edge list
-    edgelist = pd.read_csv('./network_data/{}.txt'.format(args.network), delimiter=' ', header=None)
-    edgelist = edgelist[[0,1]]
-    edgelist = edgelist.rename(columns={0: 'source', 1: 'target'})
-    edgelist = edgelist.drop_duplicates()
-    # network object
-    g = nx.from_pandas_edgelist(edgelist, source='source', target='target')
-    gcc = sorted(nx.connected_components(g), key=len, reverse=True)
-    g = g.subgraph(gcc[0])
+    g = load_network_data(args.network)
     nb_nodes = g.number_of_nodes() # update `nb_nodes`
 else:
     raise ValueError("invalid network")
+
+# generate correlated networks
+if args.correlation != 'uncorr':
+    g = generate_correlated_net_Sneppen(g, correlation=args.correlation, seed=123)
 
 adj = nx.adjacency_matrix(g, dtype='float64')
 sp.csr_matrix.setdiag(adj, 1)
@@ -80,9 +93,14 @@ x_target = np.repeat(-1, nb_nodes) # target state
 epsilon = args.eps # attack strength
 
 # simulate the voter model dynamics
-rho_clean = clean_voter_model(adj, x_init, t_max, seed=123)
-rho_adversarial = adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_time, seed=123)
-rho_random = random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, seed=123)
+if t_max >= 0:
+    rho_clean = clean_voter_model(adj, x_init, t_max, seed=123)
+    rho_adversarial = adversarial_voter_model(adj, x_init, x_target, epsilon, t_max, transition_time, seed=123)
+    rho_random = random_attacked_voter_model(adj, x_init, epsilon, t_max, transition_time, seed=123)
+else:
+    rho_clean = clean_voter_model_consensus(adj, x_init, seed=123)
+    rho_adversarial = adversarial_voter_model_consensus(adj, x_init, x_target, epsilon, transition_time, seed=123)
+    rho_random = random_attacked_voter_model_consensus(adj, x_init, epsilon, transition_time, seed=123)
 
 # Average rho values
 print("Average rho values:")
