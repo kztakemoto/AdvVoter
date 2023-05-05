@@ -1,12 +1,12 @@
 # AdvVoter
-This repository contains data and code used in our studies: *[Adversarial attacks on voter model dynamics in complex networks](https://doi.org/10.1103/PhysRevE.106.014301)* and *Mitigation of adversarial attacks on voter model dynamics by network heterogeneity*.
+This repository contains data and code used in our studies: *[Adversarial attacks on voter model dynamics in complex networks](https://doi.org/10.1103/PhysRevE.106.014301)* and *[Mitigation of adversarial attacks on voter model dynamics by network heterogeneity](https://doi.org/10.1088/2632-072X/acd296)*.
 
 ## Terms of use
 
 MIT licensed. Happy if you cite our papers when using the codes:
 
 * Chiyomaru K and Takemoto K (2022) **Adversarial attacks on voter model dynamics in complex networks**. Phys. Rev. E 106, 014301. doi:10.1103/PhysRevE.106.014301.
-* Chiyomaru K and Takemoto K (2023) **Mitigation of adversarial attacks on voter model dynamics by network heterogeneity**. *submitted for publication*.
+* Chiyomaru K and Takemoto K (2023) **Mitigation of adversarial attacks on voter model dynamics by network heterogeneity**. JPhys Complexity x, xx. doi:10.1088/2632-072X/acd296.
 
 ## Usage
 ### Requirements
